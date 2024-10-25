@@ -1,20 +1,33 @@
-const User = require('../models/User')
+const Task = require('../models/Task'); 
 
-exports.getUsers = async (req, res) => {
-  try {
-    const users = await User.find()
-    res.json(users)
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' })
-  }
-}
+exports.getTasks = async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
+};
 
-exports.createUser = async (req, res) => {
-  try {
-    const user = new User(req.body)
-    await user.save()
-    res.status(201).json(user)
-  } catch (error) {
-    res.status(400).json({ error: 'Failed to create user' })
-  }
-}
+exports.createTask = async (req, res) => {
+  const { title } = req.body;
+  const newTask = new Task({ title });
+  await newTask.save();
+  res.json(newTask);
+};
+
+exports.getTask = async (req, res) => {
+  const { id } = req.params;
+  const task = await Task.findById(id);
+  res.json(task);
+};
+
+exports.updateTask = async (req, res) => {
+  const { id } = req.params;
+  const { title, completed } = req.body;
+
+  const task = await Task.findByIdAndUpdate(id, { title, completed }, { new: true });
+  res.json(task);
+};
+
+exports.deleteTask = async (req, res) => {
+  const { id } = req.params;
+  const task = await Task.findByIdAndDelete(id);
+  res.json({ message: "Tâche supprimée." });
+};
