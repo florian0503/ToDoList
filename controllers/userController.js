@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const Task = require('../models/Task')
 
 exports.getUsers = async (req, res) => {
   const users = await User.find()
@@ -34,4 +35,20 @@ exports.deleteUser = async (req, res) => {
   const user = await User.findByIdAndDelete(id)
 
   res.json(user)
+}
+
+exports.assignTask = async (req, res) => {
+  const { userId, taskId } = req.params
+
+  const user = await User.findByIdAndUpdate(userId, { tasks: [taskId] })
+
+  res.json(user)
+}
+
+exports.getUserTasks = async (req, res) => {
+  const { id } = req.params
+
+  const user = await User.findById(id).populate('tasks')
+
+  res.json(user.tasks)
 }
